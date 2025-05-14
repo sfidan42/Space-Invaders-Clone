@@ -1,0 +1,10 @@
+{
+    "window" : {
+        "width" : 300,
+        "height" : 250
+    },
+    "margin" : {
+        "horizontal" : 15,
+        "vertical" : 25
+    }
+}

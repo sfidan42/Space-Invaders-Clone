@@ -17,12 +17,27 @@ const json	GameInstance::get(const ConfigType InType, const std::string InPathKe
 		case ConfigType::LEVEL: config = levelConfig; break;
 		default: break;
 	}
+
 	std::istringstream	iss(InPathKey);
 	std::string			key;
 
 	while (std::getline(iss, key, '.'))
 	{
+		assert(!config[key].empty());
 		config = config[key];
+	}
+	return (config);
+}
+
+const json	GameInstance::get(const ConfigType InType)
+{
+	json	config;
+
+	switch (InType)
+	{
+		case ConfigType::GAME: config = gameConfig; break;
+		case ConfigType::LEVEL: config = levelConfig; break;
+		default: break;
 	}
 	return (config);
 }

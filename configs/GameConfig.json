@@ -1,0 +1,11 @@
+{
+    "window" : {
+        "width" : 800,
+        "height" : 600
+    },
+    "margin" : {
+        "horizontal" : 0.05,
+        "vertical" : 0.40
+    },
+    "fontsize" : 20 
+}

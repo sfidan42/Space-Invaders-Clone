@@ -1,4 +1,5 @@
 #include "ACharacter.hpp"
+#include <iostream>
 
 /*
 ACharacter::ACharacter(void)
@@ -11,57 +12,72 @@ ACharacter::ACharacter(void)
 }
 */
 
-ACharacter::ACharacter(vec2 loc, float health, float maxHealth, float damageValue, float speed)
- : _maxHealth(maxHealth)
+ACharacter::ACharacter(const Rectangle &tile, const ACharacterDataType &data)
 {
-	_loc = loc;
-	_health = health;
-	_isAlive = true;
-	_damageValue = damageValue;
-	_speed = speed;
+	_tile = tile;
+	_data.health = data.health;
+	_data.maxHealth = data.maxHealth;
+	_data.isAlive = true;
+	_data.damageValue = data.damageValue;
+	_data.speed = data.speed;
+}
+
+ACharacter::ACharacter(const Rectangle &tile, float health, float maxHealth, float damageValue, float speed)
+{
+	_tile = tile;
+	_data.health = health;
+	_data.maxHealth = maxHealth;
+	_data.isAlive = true;
+	_data.damageValue = damageValue;
+	_data.speed = speed;
 }
 
 ACharacter::ACharacter(const ACharacter &character)
- : _maxHealth(character._maxHealth)
 {
-	_loc = character._loc;
-	_health = character._health;
-	_isAlive = character._isAlive;
-	_damageValue = character._damageValue;
-	_speed = character._speed;
+	_tile = character._tile;
+	_data.health = character._data.health;
+	_data.maxHealth = character._data.maxHealth;
+	_data.isAlive = character._data.isAlive;
+	_data.damageValue = character._data.damageValue;
+	_data.speed = character._data.speed;
 }
 
 ACharacter	&ACharacter::operator=(const ACharacter &character)
 {
 	if (this != &character)
-		*this = character;
+	{
+		_tile = character._tile;
+		_data.health = character._data.health;
+		_data.maxHealth = character._data.maxHealth;
+		_data.isAlive = character._data.isAlive;
+		_data.damageValue = character._data.damageValue;
+		_data.speed = character._data.speed;
+	}
 	return (*this);
 }
 
 ACharacter::~ACharacter(void) {} // Pure Virtual Destructor
 
-void	ACharacter::adjustLocation(const vec2 InLoc, const vec2 InBoundaries)
+void	ACharacter::adjustLocation(const float InIncX, const float InIncY, const Rectangle &InBoundaries)
 {
-	_loc.x = std::clamp(_loc.x + InLoc.x, 0.0f, InBoundaries.x);
-	_loc.y = std::clamp(_loc.y + InLoc.y, 0.0f, InBoundaries.y);
+	_tile.x = std::clamp(_tile.x + InIncX, InBoundaries.x, InBoundaries.x + InBoundaries.width);
+	_tile.y = std::clamp(_tile.y + InIncY, InBoundaries.y, InBoundaries.y + InBoundaries.height);
 }
 
-void	ACharacter::adjustHealth(const float InHealth)
+void	ACharacter::adjustHealth(const float InHealthIncr)
 {
-	_health = std::clamp(_health + InHealth, 0.0f, _maxHealth);
+	_data.health = std::clamp(_data.health + InHealthIncr, 0.0f, _data.maxHealth);
 }
 
-void	ACharacter::setIsAlive(const bool InIsAlive)
+void	ACharacter::adjustSpeed(const float InSpeedMult)
 {
-	_isAlive = InIsAlive;
+	_data.speed *= InSpeedMult;
 }
 
-void	ACharacter::setDamageValue(const float InDamageValue)
+void	ACharacter::checkHitWall(const Rectangle &InBoundaries)
 {
-	_damageValue = InDamageValue;
-}
-
-void	ACharacter::setSpeed(const float InSpeed)
-{
-	_damageValue = InSpeed;
+	if (_tile.x <= InBoundaries.x || InBoundaries.x + InBoundaries.width <= _tile.x)
+	{
+		_data.speed *= -1;
+	}
 }

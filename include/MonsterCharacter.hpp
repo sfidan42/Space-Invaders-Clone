@@ -5,7 +5,8 @@
 class MonsterCharacter : public ACharacter
 {
 public:
-	MonsterCharacter(vec2 loc, float health, const float maxHealth, float damageValue, float speed);
+	MonsterCharacter(const Rectangle &tile, const ACharacterDataType &data);
+	MonsterCharacter(const Rectangle &tile, float health, const float maxHealth, float damageValue, float speed);
 	~MonsterCharacter(void);
 };
 

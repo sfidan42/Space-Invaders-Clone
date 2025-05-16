@@ -1,15 +1,20 @@
 {
-    "window" : {
-        "width" : 600,
-        "height" : 400
-    },
-    "margin" : {
-        "horizontal" : 0.05,
-        "vertical" : 0.05
-    },
-    "fontsize" : 20,
-    "fps" : 120,
-    "textures" : {
-        "SpaceInvaders" : "assets/textures/space_invaders_texture.jpg"
-    }
+	"windows" : {
+		"main" : {
+			"width" : 600,
+			"height" : 500
+		},
+		"enemies" : [ 0.10, 0.10, 0.80, 0.70 ],
+		"player" : [ 0.10, 0.80, 0.80, 0.10 ]
+	},
+	"fontsize" : 20,
+	"fps" : 120,
+	"textures" : {
+		"SpaceInvaders" : "assets/textures/space_invaders_texture.jpg",
+		"sourceTiles" : {
+			"monster1" : [ 100, 3200, 400, 300 ],
+			"rocket1" : [ 50, 5000, 350, 450 ]
+		},
+		"resizeRatio" : 0.1
+	}
 }

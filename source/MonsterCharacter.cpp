@@ -1,7 +1,10 @@
 #include "MonsterCharacter.hpp"
 
-MonsterCharacter::MonsterCharacter(vec2 loc, float health, const float maxHealth, float damageValue, float speed)
- : ACharacter(loc, health, maxHealth, damageValue, speed) {}
+MonsterCharacter::MonsterCharacter(const Rectangle &tile, const ACharacterDataType &data)
+ : ACharacter(tile, data) {}
+
+MonsterCharacter::MonsterCharacter(const Rectangle &tile, float health, const float maxHealth, float damageValue, float speed)
+ : ACharacter(tile, health, maxHealth, damageValue, speed) {}
 
 MonsterCharacter::~MonsterCharacter(void) {}
 

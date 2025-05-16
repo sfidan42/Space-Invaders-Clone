@@ -11,6 +11,8 @@ const json	GameInstance::get(const ConfigType InType, const std::string InPathKe
 {
 	json	config;
 
+	assert(!InPathKey.empty());
+	
 	switch (InType)
 	{
 		case ConfigType::GAME: config = gameConfig; break;
@@ -18,12 +20,14 @@ const json	GameInstance::get(const ConfigType InType, const std::string InPathKe
 		default: break;
 	}
 
+	assert(!config.empty());
+
 	std::istringstream	iss(InPathKey);
 	std::string			key;
 
 	while (std::getline(iss, key, '.'))
 	{
-		assert(!config[key].empty());
+		assert(config.contains(key));
 		config = config[key];
 	}
 	return (config);
@@ -39,6 +43,7 @@ const json	GameInstance::get(const ConfigType InType)
 		case ConfigType::LEVEL: config = levelConfig; break;
 		default: break;
 	}
+	assert(!config.empty());
 	return (config);
 }
 
@@ -49,6 +54,7 @@ void	GameInstance::setGame(const std::string InGameConfigPath)
 	assert(gameF.is_open());
 
 	this->gameConfig = json::parse(gameF);
+	gameF.close();
 }
 
 void	GameInstance::setLevel(const std::string InLevelPath)
@@ -58,4 +64,5 @@ void	GameInstance::setLevel(const std::string InLevelPath)
 	assert(levelF.is_open());
 
 	this->levelConfig = json::parse(levelF);
+	levelF.close();
 }

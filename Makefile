@@ -1,4 +1,5 @@
 SRC		:=	ACharacter.cpp MonsterCharacter.cpp PlayerCharacter.cpp GameInstance.cpp
+HDR		:=	$(addprefix include/, $(SRC:.cpp=.hpp) Conversions.hpp)
 SRC		:=	$(addprefix source/, $(SRC))
 OBJ		:=	$(SRC:.cpp=.o)
 
@@ -15,7 +16,7 @@ FLAGS	=	-L raylib/build/raylib -l raylib \
 all: $(NAME)
 	./$(NAME)
 
-%.o : %.cpp
+%.o : %.cpp $(HDR)
 	@$(CPP) -c $(FLAGS) $< -o $@
 	@echo Compiling $< ...
 

@@ -1,12 +1,15 @@
 {
     "window" : {
-        "width" : 1000,
-        "height" : 800
+        "width" : 600,
+        "height" : 400
     },
     "margin" : {
         "horizontal" : 0.05,
         "vertical" : 0.05
     },
     "fontsize" : 20,
-    "fps" : 120
+    "fps" : 120,
+    "textures" : {
+        "SpaceInvaders" : "assets/textures/space_invaders_texture.jpg"
+    }
 }

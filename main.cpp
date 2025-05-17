@@ -89,15 +89,28 @@ int	main(void)
 
 	ACharacter	*player = new PlayerCharacter(playerDestTile, playerData);
 
+	const std::string	enemyFireAudioPath = game->get(ConfigType::GAME, "sounds.enemyFire").template get<std::string>();
+	const std::string	rocketFireAudioPath = game->get(ConfigType::GAME, "sounds.rocketFire").template get<std::string>();
+
+	InitAudioDevice();
+
+	Sound	enemyFire = LoadSound(enemyFireAudioPath.c_str());
+	Sound	rocketFire = LoadSound(rocketFireAudioPath.c_str());
+	
 	Vector2	origin = { 0, 0 };
 
 	float	speedXDirection = 1.0f;
 
 	while (!WindowShouldClose())
 	{
+		float	playerStep = 0.0f;
+		if (IsKeyDown(KEY_RIGHT)) playerStep += 2.0f;
+        if (IsKeyDown(KEY_LEFT)) playerStep -= 2.0f;
+		if (IsKeyPressed(KEY_SPACE)) PlaySound(rocketFire);
+		if (IsKeyPressed(KEY_ENTER)) PlaySound(enemyFire);
+
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
-
 		bool	anyMonsterHitsWall = false;
 		for (ACharacter *monster : monsters)
 		{
@@ -114,14 +127,18 @@ int	main(void)
 			speedXDirection *= -1;
 			
 		}
-		//float speedX = player->getSpeed();
-		//player->adjustLocation(speedX, 0.0f, playerBoundaries);
+		float speedX = player->getSpeed();
+		player->adjustLocation(playerStep * speedX, 0.0f, playerBoundaries);
 		DrawTexturePro(texture, playerSrcTile, player->getDestTile(), origin, 0.0f, WHITE);
 		player->checkHitWall(playerBoundaries);
 		EndDrawing();
 	}
 
 	UnloadTexture(texture);
+	UnloadSound(rocketFire);
+	UnloadSound(enemyFire);
+	
+	CloseAudioDevice();
 	CloseWindow();
 
 	for (ACharacter *monster : monsters)

@@ -16,5 +16,11 @@
 			"rocket1" : [ 50, 5000, 350, 450 ]
 		},
 		"resizeRatio" : 0.1
+	},
+	"sounds" : {
+		"enemyFire" : "assets/sounds/MAIN SFX/Sample 25.wav",
+		"rocketFire" : "assets/sounds/MAIN SFX/Sample 3 (2).wav",
+		"enemyHit" : "assets/sounds/MAIN SFX/Sample 26.wav",
+		"rocketHit " : "assets/sounds/MAIN SFX/Sample 22.wav"
 	}
 }

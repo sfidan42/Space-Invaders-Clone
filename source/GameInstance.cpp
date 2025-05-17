@@ -53,7 +53,7 @@ void	GameInstance::setGame(const std::string InGameConfigPath)
 	
 	assert(gameF.is_open());
 
-	this->gameConfig = json::parse(gameF);
+	gameConfig = json::parse(gameF);
 	gameF.close();
 }
 
@@ -63,6 +63,6 @@ void	GameInstance::setLevel(const std::string InLevelPath)
 
 	assert(levelF.is_open());
 
-	this->levelConfig = json::parse(levelF);
+	levelConfig = json::parse(levelF);
 	levelF.close();
 }

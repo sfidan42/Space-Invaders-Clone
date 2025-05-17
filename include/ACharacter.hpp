@@ -38,5 +38,5 @@ public:
 	void	adjustHealth(const float InHealthIncr);
 	void	adjustSpeed(const float InSpeedMult);
 public:
-	void	checkHitWall(const Rectangle &InBoundaries);
+	bool	checkHitWall(const Rectangle &InBoundaries);
 };

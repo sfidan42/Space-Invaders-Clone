@@ -8,7 +8,7 @@
 			"health" : 100.0,
 			"maxHealth" : 100.0,
 			"damageValue" : 50.0,
-			"speed" : 0.5
+			"speed" : 1.0
 		}
 	},
 	"monster" : {
@@ -16,9 +16,8 @@
 			"health" : 50.0,
 			"maxHealth" : 50.0,
 			"damageValue" : 10.0,
-			"speed" : 0.3
+			"speed" : 0.1
 		}
 	},
-	"monsterCounts" : [ 5, 10, 7, 5, 5 ],
-	"rowSpeedMultipliers" : [ 1.0, 0.5, 1.7, 3.0, 2.1 ]
+	"monsterCounts" : [ 5, 3, 7, 5, 5]
 }

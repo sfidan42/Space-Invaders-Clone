@@ -60,8 +60,13 @@ ACharacter::~ACharacter(void) {} // Pure Virtual Destructor
 
 void	ACharacter::adjustLocation(const float InIncX, const float InIncY, const Rectangle &InBoundaries)
 {
-	_tile.x = std::clamp(_tile.x + InIncX, InBoundaries.x, InBoundaries.x + InBoundaries.width);
-	_tile.y = std::clamp(_tile.y + InIncY, InBoundaries.y, InBoundaries.y + InBoundaries.height);
+	float	leftLimit = InBoundaries.x - _tile.width / 2;
+	float	rightLimit = leftLimit + InBoundaries.width;
+	float	upLimit = InBoundaries.y - _tile.height / 2;
+	float	downLimit = upLimit + InBoundaries.height;
+
+	_tile.x = std::clamp(_tile.x + InIncX, leftLimit, rightLimit);
+	_tile.y = std::clamp(_tile.y + InIncY, upLimit, downLimit);
 }
 
 void	ACharacter::adjustHealth(const float InHealthIncr)
@@ -74,10 +79,10 @@ void	ACharacter::adjustSpeed(const float InSpeedMult)
 	_data.speed *= InSpeedMult;
 }
 
-void	ACharacter::checkHitWall(const Rectangle &InBoundaries)
+bool	ACharacter::checkHitWall(const Rectangle &InBoundaries)
 {
-	if (_tile.x <= InBoundaries.x || InBoundaries.x + InBoundaries.width <= _tile.x)
-	{
-		_data.speed *= -1;
-	}
+	float	leftLimit = InBoundaries.x - _tile.width / 2;
+	float	rightLimit = leftLimit + InBoundaries.width;
+
+	return (_tile.x <= leftLimit || rightLimit <= _tile.x);
 }

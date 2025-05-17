@@ -3,6 +3,7 @@
 #include "PlayerCharacter.hpp"
 #include "MonsterCharacter.hpp"
 #include "Conversions.hpp"
+#include <iostream>
 
 int	main(void)
 {
@@ -24,11 +25,20 @@ int	main(void)
 	const int fps = game->get(ConfigType::GAME, "fps").template get<const int>();
 	SetTargetFPS(fps);
 
+	Rectangle	enemyBoundaries = game->get(ConfigType::GAME, "windows.enemies").template get<Rectangle>();
+	Rectangle	playerBoundaries = game->get(ConfigType::GAME, "windows.player").template get<Rectangle>();
+
+	enemyBoundaries.x *= screenW;
+	enemyBoundaries.y *= screenH;
+	enemyBoundaries.width *= screenW;
+	enemyBoundaries.height *= screenH;
+
+	playerBoundaries.x *= screenW;
+	playerBoundaries.y *= screenH;
+	playerBoundaries.width *= screenW;
+	playerBoundaries.height *= screenH;
+
 	std::vector<unsigned int>	monsterCounts = game->get(ConfigType::LEVEL, "monsterCounts").template get<std::vector<unsigned int>>();
-	std::vector<float>	rowSpeedMultipliers = game->get(ConfigType::LEVEL, "rowSpeedMultipliers").template get<std::vector<float>>();
-
-	assert(monsterCounts.size() == rowSpeedMultipliers.size());
-
 	std::vector<ACharacter *>	monsters;
 
 	const int	totalNumMonsters = std::accumulate(monsterCounts.begin(), monsterCounts.end(), 0);
@@ -43,18 +53,21 @@ int	main(void)
 	monsterDestTile.width = monsterSrcTile.width * resizeRatio;
 	monsterDestTile.height = monsterSrcTile.height * resizeRatio;
 
-	float	cellHeight = screenH / (float)monsterCounts.size();
+	float	cellWidth = 1.5f * monsterDestTile.width;
+	float	cellHeight = 1.5f * monsterDestTile.height;
+
+	assert(cellWidth * *std::max_element(monsterCounts.begin(), monsterCounts.end()) <= enemyBoundaries.width);
+	assert(cellHeight * monsterCounts.size() <= enemyBoundaries.height);
+
 	for (unsigned int	monsterCountIdx = 0; monsterCountIdx < monsterCounts.size(); monsterCountIdx++)
 	{
 		unsigned int	monsterCount = monsterCounts[monsterCountIdx];
 
-		float	cellWidth = screenW / (float)monsterCount;
 		for (unsigned int rowCountIdx = 0; rowCountIdx < monsterCount; rowCountIdx++)
 		{
-			monsterDestTile.x = cellWidth * rowCountIdx;
-			monsterDestTile.y = cellHeight * monsterCountIdx;
+			monsterDestTile.x = enemyBoundaries.x + cellWidth * rowCountIdx - monsterDestTile.width / 2;
+			monsterDestTile.y = enemyBoundaries.y + cellHeight * monsterCountIdx - monsterDestTile.height / 2;
 			ACharacter	*monster = new MonsterCharacter(monsterDestTile, monsterData);
-			monster->adjustSpeed(rowSpeedMultipliers[monsterCountIdx]);
 			monsters.push_back(monster);
 		}
 	}
@@ -66,44 +79,43 @@ int	main(void)
 	json	playerLocation = game->get(ConfigType::LEVEL, "player.location");
 	playerDestTile.x = playerLocation["horizontal"].template get<float>();
 	playerDestTile.y = playerLocation["vertical"].template get<float>();
-	playerDestTile.width = playerSrcTile.width;
-	playerDestTile.height = playerSrcTile.height;
+	playerDestTile.width = playerSrcTile.width * resizeRatio;
+	playerDestTile.height = playerSrcTile.height * resizeRatio;
 
 	playerDestTile.x *= screenW;
 	playerDestTile.y *= screenH;
-	playerDestTile.width *= resizeRatio;
-	playerDestTile.height *= resizeRatio;
+	playerDestTile.x -= playerDestTile.width / 2;
+	playerDestTile.y -= playerDestTile.height / 2;
 
 	ACharacter	*player = new PlayerCharacter(playerDestTile, playerData);
 
 	Vector2	origin = { 0, 0 };
 
-	Rectangle	enemyBoundaries = game->get(ConfigType::GAME, "windows.enemies").template get<Rectangle>();
-	Rectangle	playerBoundaries = game->get(ConfigType::GAME, "windows.player").template get<Rectangle>();
-
-	enemyBoundaries.x *= screenW;
-	enemyBoundaries.y *= screenH;
-	enemyBoundaries.width *= screenW;
-	enemyBoundaries.height *= screenH;
-
-	playerBoundaries.x *= screenW;
-	playerBoundaries.y *= screenH;
-	playerBoundaries.width *= screenW;
-	playerBoundaries.height *= screenH;
+	float	speedXDirection = 1.0f;
 
 	while (!WindowShouldClose())
 	{
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
+
+		bool	anyMonsterHitsWall = false;
 		for (ACharacter *monster : monsters)
 		{
-			float	speedX = monster->getSpeed();
+			float	speedX = monster->getSpeed() * speedXDirection;
 			monster->adjustLocation(speedX, 0.0f, enemyBoundaries);
 			DrawTexturePro(texture, monsterSrcTile, monster->getDestTile(), origin, 0.0f, WHITE);
-			monster->checkHitWall(enemyBoundaries);
+			if (monster->checkHitWall(enemyBoundaries))
+			{
+				anyMonsterHitsWall = true;
+			}
 		}
-		float speedX = player->getSpeed();
-		player->adjustLocation(speedX, 0.0f, playerBoundaries);
+		if (anyMonsterHitsWall)
+		{
+			speedXDirection *= -1;
+			
+		}
+		//float speedX = player->getSpeed();
+		//player->adjustLocation(speedX, 0.0f, playerBoundaries);
 		DrawTexturePro(texture, playerSrcTile, player->getDestTile(), origin, 0.0f, WHITE);
 		player->checkHitWall(playerBoundaries);
 		EndDrawing();

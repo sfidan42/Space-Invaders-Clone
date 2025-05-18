@@ -1,4 +1,4 @@
-SRC		:=	ACharacter.cpp MonsterCharacter.cpp PlayerCharacter.cpp GameInstance.cpp
+SRC		:=	ACharacter.cpp MonsterCharacter.cpp PlayerCharacter.cpp GameInstance.cpp GameScene.cpp Scene.cpp
 HDR		:=	$(addprefix include/, $(SRC:.cpp=.hpp) Conversions.hpp)
 SRC		:=	$(addprefix source/, $(SRC))
 OBJ		:=	$(SRC:.cpp=.o)
@@ -7,8 +7,8 @@ NAME	:=	SpaceInvaders
 LIB		:=	lib$(NAME).a
 
 CPP		=	c++ -Wall -Wextra -Werror -std=c++20
-FLAGS	=	-L raylib/build/raylib -l raylib \
-			-L . -l $(NAME) \
+FLAGS	=	-L . -l $(NAME) \
+			-L raylib/build/raylib -l raylib \
 			-I raylib/build/raylib/include \
 			-I include \
 			-I json/include

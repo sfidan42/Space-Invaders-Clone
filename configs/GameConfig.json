@@ -4,7 +4,7 @@
 			"width" : 600,
 			"height" : 500
 		},
-		"enemies" : [ 0.10, 0.10, 0.80, 0.70 ],
+		"enemies" : [ 0.05, 0.10, 0.90, 0.70 ],
 		"player" : [ 0.10, 0.80, 0.80, 0.10 ]
 	},
 	"fontsize" : 20,
@@ -12,8 +12,16 @@
 	"textures" : {
 		"SpaceInvaders" : "assets/textures/space_invaders_texture.jpg",
 		"sourceTiles" : {
-			"monster1" : [ 100, 3200, 400, 300 ],
-			"rocket1" : [ 50, 5000, 350, 450 ]
+			"monsters" : [
+				[ 100, 3200, 395, 300 ],
+				[ 525, 3195, 370, 310 ],
+				[ 1300, 3152, 307, 342 ]
+			],
+			"cell" : {
+				"width" : 40.0,
+				"heigth" : 30.0
+			},
+			"rocket" : [ 50, 5000, 350, 450 ]
 		},
 		"resizeRatio" : 0.1
 	},

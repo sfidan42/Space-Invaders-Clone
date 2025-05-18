@@ -16,8 +16,10 @@
 			"health" : 50.0,
 			"maxHealth" : 50.0,
 			"damageValue" : 10.0,
-			"speed" : 0.1
-		}
+			"speed" : 1.0
+		},
+		"acceleration" : 0.05
 	},
-	"monsterCounts" : [ 5, 3, 7, 5, 5]
+	"monsterCounts" : [ 8, 4, 7, 6, 11],
+	"monsterTypes" : [ 0, 1, 1, 2, 0]
 }

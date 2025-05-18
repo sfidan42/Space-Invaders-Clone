@@ -4,9 +4,11 @@
 
 class MonsterCharacter : public ACharacter
 {
+private:
+	Rectangle	_srcTile;
 public:
-	MonsterCharacter(const Rectangle &tile, const ACharacterDataType &data);
-	MonsterCharacter(const Rectangle &tile, float health, const float maxHealth, float damageValue, float speed);
+	MonsterCharacter(const Rectangle &srcTile, const Rectangle &destTile, const ACharacterDataType &data);
+	MonsterCharacter(const Rectangle &srcTile, const Rectangle &destTile, float health, const float maxHealth, float damageValue, float speed);
 	~MonsterCharacter(void);
 };
 

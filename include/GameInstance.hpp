@@ -9,12 +9,6 @@
 
 using json = nlohmann::json;
 
-# define GAME_CONFIG(instance, keyPath, dataType) \
-	instance->get(ConfigType::GAME, keyPath).template get<dataType>()
-
-# define LEVEL_CONFIG(instance, keyPath, dataType) \
-	instance->get(ConfigType::LEVEL, keyPath).template get<dataType>()
-
 enum class ConfigType
 {
 	GAME,

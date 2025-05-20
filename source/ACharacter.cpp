@@ -12,25 +12,12 @@ ACharacter::ACharacter(void)
 }
 */
 
-ACharacter::ACharacter(const Rectangle &srcTile, const Rectangle &destTile, const ACharacterDataType &data)
+ACharacter::ACharacter(const Rectangle &srcTile, const Rectangle &destTile, const ACharacterDataType &data, const BulletSrcDataType &bulletSrc)
 {
 	_srcTile = srcTile;
 	_destTile = destTile;
 	_data = data;
-	_data.isAlive = true;
-}
-
-ACharacter::ACharacter(const Rectangle &srcTile, const Rectangle &destTile, float health, float maxHealth, float damageValue, float speed)
-{
-	_srcTile = srcTile;
-	_destTile = destTile;
-	_data = {
-		.health = health,
-		.maxHealth = maxHealth,
-		.isAlive = true,
-		.damageValue = damageValue,
-		.speed = speed
-	};
+	_bulletSrc = bulletSrc;
 }
 
 ACharacter::ACharacter(const ACharacter &character)
@@ -38,6 +25,7 @@ ACharacter::ACharacter(const ACharacter &character)
 	_srcTile = character._srcTile;
 	_destTile = character._destTile;
 	_data = character._data;
+	_bulletSrc = character._bulletSrc;
 }
 
 ACharacter	&ACharacter::operator=(const ACharacter &character)
@@ -47,6 +35,7 @@ ACharacter	&ACharacter::operator=(const ACharacter &character)
 		_srcTile = character._srcTile;
 		_destTile = character._destTile;
 		_data = character._data;
+		_bulletSrc = character._bulletSrc;
 	}
 	return (*this);
 }

@@ -77,5 +77,6 @@
         "variant": "cpp",
         "cassert": "cpp",
         "*.m": "cpp"
-    }
+    },
+    "cmake.sourceDirectory": "/home/sadettin/Desktop/Modelra Interview/json"
 }

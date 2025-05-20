@@ -4,7 +4,9 @@
 class PlayerCharacter : public ACharacter
 {
 public:
-	PlayerCharacter(const Rectangle &srcTile, const Rectangle &destTile, const ACharacterDataType &data);
-	PlayerCharacter(const Rectangle &srcTile, const Rectangle &destTile, float health, const float maxHealth, float damageValue, float speed);
+	PlayerCharacter(const Rectangle &srcTile, const Rectangle &destTile, const ACharacterDataType &data, const BulletSrcDataType &bulletSrc);
 	~PlayerCharacter(void);
+public:
+	void	fireBullets(void);
+	void	updateBulletLocations(void);
 };

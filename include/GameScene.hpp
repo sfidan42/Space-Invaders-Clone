@@ -1,7 +1,7 @@
 #pragma once
 # include "Scene.hpp"
-#include "PlayerCharacter.hpp"
-#include "MonsterCharacter.hpp"
+# include "PlayerCharacter.hpp"
+# include "MonsterCharacter.hpp"
 # include <vector>
 # include <raylib.h>
 
@@ -19,7 +19,7 @@ private:
 	float	_locationYOffset;
 	float	_playerStep;
 	float	_cellWidth;
-	float	_cellHeigth;
+	float	_cellheight;
 private:
 	void	initMonsters(void);
 	void	initPlayer(void);

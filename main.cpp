@@ -18,7 +18,7 @@ int	main(void)
 
 	//const int	fontSize = game->get(ConfigType::GAME, "fontsize").template get<const int>();
 
-	const int fps = game->get(ConfigType::GAME, "fps").template get<const int>();
+	const int	fps = game->get(ConfigType::GAME, "fps").template get<const int>();
 	SetTargetFPS(fps);
 
 	scenes[0] = new GameScene();
@@ -26,16 +26,16 @@ int	main(void)
 	while (!WindowShouldClose())
 	{
 		scenes[0]->eventHandler();
-	
+
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
-	
+
 		scenes[0]->drawingHandler();
-	
+
 		EndDrawing();
 	}
-	
+
 	CloseWindow();
-	
+
 	return (0);
 }

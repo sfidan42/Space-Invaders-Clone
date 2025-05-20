@@ -27,8 +27,8 @@ inline void	to_json(json &j, const ACharacterDataType &data)
 
 	d["health"] = data.health;
 	d["maxHealth"] = data.maxHealth;
-	d["damageValue"] = data.damageValue;
 	d["speed"] = data.speed;
+	d["isAlive"] = data.isAlive;
 	j["data"] = d;
 }
 
@@ -37,11 +37,10 @@ inline void	from_json(const json &j, ACharacterDataType &data)
 	assert(!j.empty());
 	assert(j.contains("health"));
 	assert(j.contains("maxHealth"));
-	assert(j.contains("damageValue"));
 	assert(j.contains("speed"));
 
 	j.at("health").get_to(data.health);
 	j.at("maxHealth").get_to(data.maxHealth);
-	j.at("damageValue").get_to(data.damageValue);
 	j.at("speed").get_to(data.speed);
+	data.isAlive = true;
 }

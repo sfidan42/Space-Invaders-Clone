@@ -18,6 +18,9 @@ void	GameScene::initMonsters(void)
 	std::vector<Rectangle>	monsterSrcTiles = game->get(ConfigType::GAME, "textures.sourceTiles.monsters").template get<std::vector<Rectangle>>();
 	std::vector<Rectangle>	monsterDestTiles;
 
+	const int	fps = game->get(ConfigType::GAME, "fps").template get<const int>();
+	monsterData.speed *= 100.0f / (float)fps;
+
 	monsterDestTiles.reserve(monsterSrcTiles.size());
 	for (Rectangle &monsterSrcTile : monsterSrcTiles)
 	{
@@ -30,9 +33,19 @@ void	GameScene::initMonsters(void)
 		monsterDestTiles.push_back(monsterDestTile);
 	}
 
+	BulletSrcDataType	bullet;
+	bullet.srcTile = game->get(ConfigType::GAME, "textures.sourceTiles.bullet").template get<Rectangle>();
+	
+	json	monsterBullet = game->get(ConfigType::LEVEL, "monster.bullet");
+	bullet.damage = monsterBullet["damage"].template get<float>();
+	bullet.speed = monsterBullet["speed"].template get<float>();
+
+	bullet.destSize.x = bullet.srcTile.width * resizeRatio;
+	bullet.destSize.y = bullet.srcTile.height * resizeRatio;
+
 	json	cell = game->get(ConfigType::GAME, "textures.sourceTiles.cell");
 	_cellWidth = cell["width"].template get<const float>();
-	_cellHeigth = cell["heigth"].template get<const float>();
+	_cellheight = cell["height"].template get<const float>();
 
 	for (unsigned int	monsterCountIdx = 0; monsterCountIdx < monsterCounts.size(); monsterCountIdx++)
 	{
@@ -48,9 +61,9 @@ void	GameScene::initMonsters(void)
 			Rectangle	monsterDestTile = monsterDestTiles[monsterType];
 
 			monsterDestTile.x = _enemyBoundaries.x + _cellWidth * rowCountIdx - monsterDestTile.width / 2;
-			monsterDestTile.y = _enemyBoundaries.y + _cellHeigth * monsterCountIdx - monsterDestTile.height / 2;
+			monsterDestTile.y = _enemyBoundaries.y + _cellheight * monsterCountIdx - monsterDestTile.height / 2;
 
-			ACharacter	*monster = new MonsterCharacter(monsterSrcTile, monsterDestTile, monsterData);
+			ACharacter	*monster = new MonsterCharacter(monsterSrcTile, monsterDestTile, monsterData, bullet);
 			_monsters.push_back(monster);
 		}
 	}
@@ -63,6 +76,9 @@ void	GameScene::initPlayer(void)
 	ACharacterDataType	playerData = game->get(ConfigType::LEVEL, "player.data").template get<ACharacterDataType>();
 	Rectangle			playerSrcTile = game->get(ConfigType::GAME, "textures.sourceTiles.rocket").template get<Rectangle>();
 	Rectangle			playerDestTile;
+	
+	const int	fps = game->get(ConfigType::GAME, "fps").template get<const int>();
+	playerData.speed *= 100.0f / (float)fps;
 
 	float	resizeRatio = game->get(ConfigType::GAME, "textures.resizeRatio").template get<float>();
 	
@@ -80,7 +96,17 @@ void	GameScene::initPlayer(void)
 	playerDestTile.x -= playerDestTile.width / 2;
 	playerDestTile.y -= playerDestTile.height / 2;
 
-	_player = new PlayerCharacter(playerSrcTile, playerDestTile, playerData);
+	BulletSrcDataType	bulletSrc;
+	bulletSrc.srcTile = game->get(ConfigType::GAME, "textures.sourceTiles.bullet").template get<Rectangle>();
+	
+	json	playerBullet = game->get(ConfigType::LEVEL, "player.bullet");
+	bulletSrc.damage = playerBullet["damage"].template get<float>();
+	bulletSrc.speed = playerBullet["speed"].template get<float>();
+
+	bulletSrc.destSize.x = bulletSrc.srcTile.width * resizeRatio;
+	bulletSrc.destSize.y = bulletSrc.srcTile.height * resizeRatio;
+
+	_player = new PlayerCharacter(playerSrcTile, playerDestTile, playerData, bulletSrc);
 }
 
 GameScene::GameScene() : Scene()
@@ -145,10 +171,19 @@ GameScene::~GameScene()
 void	GameScene::eventHandler(void)
 {
 	_playerStep = 0.0f;
-	if (IsKeyDown(KEY_RIGHT)) _playerStep += 2.0f;
-	if (IsKeyDown(KEY_LEFT)) _playerStep -= 2.0f;
-	if (IsKeyPressed(KEY_ENTER)) PlaySound(_sounds[0]);
-	if (IsKeyPressed(KEY_SPACE)) PlaySound(_sounds[1]);
+	if (IsKeyDown(KEY_RIGHT))
+	{
+		_playerStep += 2.0f;
+	}
+	if (IsKeyDown(KEY_LEFT))
+	{
+		_playerStep -= 2.0f;
+	}
+	if (IsKeyPressed(KEY_SPACE))
+	{
+		PlaySound(_sounds[1]);
+		_player->fireBullets();
+	}
 }
 
 void	GameScene::drawingHandler(void)
@@ -176,7 +211,7 @@ void	GameScene::drawingHandler(void)
 	if (anyMonsterHitsWall)
 	{
 		_speedXDirection *= -1;
-		_locationYOffset = _cellHeigth;
+		_locationYOffset = _cellheight;
 	}
 	else
 	{
@@ -188,7 +223,13 @@ void	GameScene::drawingHandler(void)
 	_player->checkHitWall(_playerBoundaries);
 	if (anyMonsterHitsFloor)
 	{
-		DrawText("Game Over!", 0, 0, 20, BLACK);
+		DrawText("Game Over!", 15, 15, 20, BLACK);
+	}
+	_player->updateBulletLocations();
+	BulletSrcDataType playerBulletSrc = _player->getBulletSrc();
+	const std::vector<Rectangle> &playerBulletDestTiles = _player->getBulletDestTiles();
+	for (const Rectangle &playerBulletDestTile : playerBulletDestTiles)
+	{
+		DrawTexturePro(_texture, playerBulletSrc.srcTile, playerBulletDestTile, {0.0f, 0.0f}, 0.0f, WHITE);
 	}
 }
-

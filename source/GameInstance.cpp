@@ -1,5 +1,4 @@
 #include "GameInstance.hpp"
-
 GameInstance	*GameInstance::instancePtr = new GameInstance();
 
 GameInstance	*GameInstance::getInstance(void)

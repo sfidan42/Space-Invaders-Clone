@@ -14,6 +14,8 @@ private:
 	ACharacter					*_player;
 	Rectangle					_enemyBoundaries;
 	Rectangle					_playerBoundaries;
+	Rectangle					_explosionSrcTile;
+	Rectangle					_explosionDestTile;
 private:
 	float	_speedXDirection;
 	float	_locationYOffset;

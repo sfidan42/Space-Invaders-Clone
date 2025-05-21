@@ -3,6 +3,7 @@
 # include <algorithm>
 # include <nlohmann/json.hpp>
 # include <raylib.h>
+# include <list>
 
 typedef struct
 {
@@ -20,16 +21,22 @@ typedef struct
 	float		speed;
 }				BulletSrcDataType;
 
+typedef struct
+{
+	Rectangle	tile;
+	bool		isActive;
+}				BulletDestDataType;
+
 class ACharacter
 {
 private:
 	ACharacter(void);
 protected:
-	Rectangle				_srcTile;
-	Rectangle				_destTile;
-	ACharacterDataType		_data;
-	BulletSrcDataType		_bulletSrc;
-	std::vector<Rectangle>	_bulletDestTiles;
+	Rectangle						_srcTile;
+	Rectangle						_destTile;
+	ACharacterDataType				_data;
+	BulletSrcDataType				_bulletSrc;
+	std::list<BulletDestDataType>	_bulletDestTiles;
 public:
 	ACharacter(const Rectangle &srcTile, const Rectangle &destTile, const ACharacterDataType &data, const BulletSrcDataType &bulletSrc);
 	ACharacter(const ACharacter &character);
@@ -43,15 +50,18 @@ public:
 	bool							getIsAlive(void) const { return (_data.isAlive); };
 	float							getSpeed(void) const { return (_data.speed); }
 	const BulletSrcDataType			&getBulletSrc(void) const { return (_bulletSrc); }
-	const std::vector<Rectangle>	&getBulletDestTiles(void) const { return (_bulletDestTiles); }
+	std::list<BulletDestDataType>	&getBulletDestTiles(void) { return (_bulletDestTiles); }
 public:
 	void	adjustLocation(const float InIncX, const float InIncY, const Rectangle &InBoundaries);
 	void	adjustHealth(const float InHealthIncr);
 	void	adjustSpeed(const float InSpeedMult);
+public:
+	void	changeTiles(const Rectangle &srcTile, const Rectangle &destTile);
 public:
 	bool	checkHitWall(const Rectangle &InBoundaries);
 	bool	checkHitFloor(const Rectangle &InBoundaries);
 public:
 	virtual void	fireBullets(void) = 0;
 	virtual void	updateBulletLocations(void) = 0;
+	bool			amIHitByYourBullet(ACharacter *character);
 };

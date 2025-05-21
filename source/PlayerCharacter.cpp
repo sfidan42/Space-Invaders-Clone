@@ -7,23 +7,28 @@ PlayerCharacter::~PlayerCharacter(void) {}
 
 void	PlayerCharacter::fireBullets(void)
 {
-	Rectangle	bullet;
+	BulletDestDataType	bullet;
 
-	bullet.width = _bulletSrc.destSize.x;
-	bullet.height = _bulletSrc.destSize.y;
+	bullet.isActive = true;
 
-	bullet.x = _destTile.x;
-	bullet.y = _destTile.y;
+	bullet.tile.width = _bulletSrc.destSize.x;
+	bullet.tile.height = _bulletSrc.destSize.y;
+
+	bullet.tile.x = _destTile.x;
+	bullet.tile.y = _destTile.y;
 	_bulletDestTiles.push_back(bullet);
 
-	bullet.x += _destTile.width;
+	bullet.tile.x += _destTile.width;
 	_bulletDestTiles.push_back(bullet);
 }
 
 void	PlayerCharacter::updateBulletLocations(void)
 {
-	for (Rectangle &bullet : _bulletDestTiles)
+	for (BulletDestDataType &bullet : _bulletDestTiles)
 	{
-		bullet.y -= _bulletSrc.speed;
+		if (bullet.isActive)
+		{
+			bullet.tile.y -= _bulletSrc.speed;
+		}
 	}
 }

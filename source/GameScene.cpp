@@ -1,5 +1,6 @@
 #include "GameScene.hpp"
 #include "Conversions.hpp"
+#include <iostream>
 
 void	GameScene::initMonsters(void)
 {
@@ -136,6 +137,11 @@ GameScene::GameScene() : Scene()
 	initMonsters();
 	initPlayer();
 
+	_explosionSrcTile = game->get(ConfigType::GAME, "textures.sourceTiles.explosion").template get<Rectangle>();
+	float	resizeRatio = game->get(ConfigType::GAME, "textures.resizeRatio").template get<float>();
+	_explosionDestTile.width = _explosionSrcTile.width * resizeRatio;
+	_explosionDestTile.height = _explosionSrcTile.height * resizeRatio;
+
 	InitAudioDevice();
 
 	const std::string	enemyFireAudioPath = game->get(ConfigType::GAME, "sounds.enemyFire").template get<std::string>();
@@ -190,12 +196,10 @@ void	GameScene::drawingHandler(void)
 {
 	bool	anyMonsterHitsWall = false;
 	bool	anyMonsterHitsFloor = false;
+	bool	anyMonsterIsAlive = false;
+
 	for (ACharacter *monster : _monsters)
 	{
-		if (!monster->getIsAlive())
-		{
-			continue ;
-		}
 		float	speedX = monster->getSpeed();
 		monster->adjustLocation(speedX * _speedXDirection, _locationYOffset, _enemyBoundaries);
 		DrawTexturePro(_texture, monster->getSrcTile(), monster->getDestTile(), {0.0f, 0.0f}, 0.0f, WHITE);
@@ -207,6 +211,17 @@ void	GameScene::drawingHandler(void)
 		{
 			anyMonsterHitsFloor = true;
 		}
+		if (monster->getIsAlive())
+		{
+			anyMonsterIsAlive = true;
+		}
+		if (monster->amIHitByYourBullet(_player))
+		{
+			if (!monster->getIsAlive())
+			{
+				monster->changeTiles(_explosionSrcTile, _explosionDestTile);
+			}
+		}
 	}
 	if (anyMonsterHitsWall)
 	{
@@ -216,6 +231,10 @@ void	GameScene::drawingHandler(void)
 	else
 	{
 		_locationYOffset = 0.0f;
+	}
+	if (!anyMonsterIsAlive)
+	{
+		DrawText("Game Won!", 10, 10, 20, BLACK);
 	}
 	float speedX = _player->getSpeed();
 	_player->adjustLocation(_playerStep * speedX, 0.0f, _playerBoundaries);
@@ -227,9 +246,12 @@ void	GameScene::drawingHandler(void)
 	}
 	_player->updateBulletLocations();
 	BulletSrcDataType playerBulletSrc = _player->getBulletSrc();
-	const std::vector<Rectangle> &playerBulletDestTiles = _player->getBulletDestTiles();
-	for (const Rectangle &playerBulletDestTile : playerBulletDestTiles)
+	const std::list<BulletDestDataType> &playerBulletDestTiles = _player->getBulletDestTiles();
+	for (const BulletDestDataType &bulletDest : playerBulletDestTiles)
 	{
-		DrawTexturePro(_texture, playerBulletSrc.srcTile, playerBulletDestTile, {0.0f, 0.0f}, 0.0f, WHITE);
+		if (bulletDest.isActive)
+		{
+			DrawTexturePro(_texture, playerBulletSrc.srcTile, bulletDest.tile, {0.0f, 0.0f}, 0.0f, WHITE);
+		}
 	}
 }

@@ -22,7 +22,8 @@
 			"cell" : {
 				"width" : 60.0,
 				"height" : 50.0
-			}
+			},
+			"explosion" : [ 3771, 4645, 334, 295 ]
 		},
 		"resizeRatio" : 0.15
 	},

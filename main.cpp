@@ -28,7 +28,7 @@ int	main(void)
 		scenes[0]->eventHandler();
 
 		BeginDrawing();
-		ClearBackground(RAYWHITE);
+		ClearBackground(WHITE);
 
 		scenes[0]->drawingHandler();
 

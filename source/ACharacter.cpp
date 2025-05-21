@@ -44,37 +44,104 @@ ACharacter::~ACharacter(void) {} // Pure Virtual Destructor
 
 void	ACharacter::adjustLocation(const float InIncX, const float InIncY, const Rectangle &InBoundaries)
 {
-	float	leftLimit = InBoundaries.x - _destTile.width / 2;
-	float	rightLimit = leftLimit + InBoundaries.width;
-	float	upLimit = InBoundaries.y - _destTile.height / 2;
-	float	downLimit = upLimit + InBoundaries.height;
+	if (_data.isAlive)
+	{
+		float	leftLimit = InBoundaries.x - _destTile.width / 2;
+		float	rightLimit = leftLimit + InBoundaries.width;
+		float	upLimit = InBoundaries.y - _destTile.height / 2;
+		float	downLimit = upLimit + InBoundaries.height;
 
-	_destTile.x = std::clamp(_destTile.x + InIncX, leftLimit, rightLimit);
-	_destTile.y = std::clamp(_destTile.y + InIncY, upLimit, downLimit);
+		_destTile.x = std::clamp(_destTile.x + InIncX, leftLimit, rightLimit);
+		_destTile.y = std::clamp(_destTile.y + InIncY, upLimit, downLimit);
+	}
 }
 
 void	ACharacter::adjustHealth(const float InHealthIncr)
 {
-	_data.health = std::clamp(_data.health + InHealthIncr, 0.0f, _data.maxHealth);
+	float	minHealth = 0.0f;
+
+	_data.health = std::clamp(_data.health + InHealthIncr, minHealth, _data.maxHealth);
+	if (_data.health <= minHealth)
+	{
+		_data.isAlive = false;
+	}
 }
 
 void	ACharacter::adjustSpeed(const float InSpeedMult)
 {
-	_data.speed *= InSpeedMult;
+	if (_data.isAlive)
+	{
+		_data.speed *= InSpeedMult;
+	}
 }
 
 bool	ACharacter::checkHitWall(const Rectangle &InBoundaries)
 {
-	float	leftLimit = InBoundaries.x - _destTile.width / 2;
-	float	rightLimit = leftLimit + InBoundaries.width;
-
-	return (_destTile.x <= leftLimit || rightLimit <= _destTile.x);
+	if (_data.isAlive)
+	{
+		float	leftLimit = InBoundaries.x - _destTile.width / 2;
+		float	rightLimit = leftLimit + InBoundaries.width;
+		
+		return (_destTile.x <= leftLimit || rightLimit <= _destTile.x);
+	}
+	return (false);
 }
 
 bool	ACharacter::checkHitFloor(const Rectangle &InBoundaries)
 {
-	float	topLimit = InBoundaries.y - _destTile.height / 2;
-	float	bottomLimit = topLimit + InBoundaries.height;
+	if (_data.isAlive)
+	{
+		float	topLimit = InBoundaries.y - _destTile.height / 2;
+		float	bottomLimit = topLimit + InBoundaries.height;
+	
+		return (bottomLimit <= _destTile.y);
+	}
+	return (false);
+}
 
-	return (bottomLimit <= _destTile.y);
+void	ACharacter::changeTiles(const Rectangle &srcTile, const Rectangle &destTile)
+{
+	_srcTile = srcTile;
+	_destTile.width = destTile.width;
+	_destTile.height = destTile.height;
+}
+
+static inline bool valueInRange(int value, int min, int max)
+{
+	return (value >= min) && (value <= max);
+}
+
+static inline bool rectOverlap(const Rectangle &A, const Rectangle &B)
+{
+	bool xOverlap = valueInRange(A.x, B.x, B.x + B.width) ||
+					valueInRange(B.x, A.x, A.x + A.width);
+
+	bool yOverlap = valueInRange(A.y, B.y, B.y + B.height) ||
+					valueInRange(B.y, A.y, A.y + A.height);
+
+	return xOverlap && yOverlap;
+}
+
+bool	ACharacter::amIHitByYourBullet(ACharacter *character)
+{
+	assert(character != NULL);
+
+	std::list<BulletDestDataType>	&bullets = character->getBulletDestTiles();
+	for (BulletDestDataType &bullet : bullets)
+	{
+		if (!bullet.isActive || !_data.isAlive)
+		{
+			continue ;
+		}
+		if (rectOverlap(bullet.tile, _destTile))
+		{
+			this->adjustHealth(0.0f - character->getBulletSrc().damage);
+			if (!this->getIsAlive())
+			{
+				bullet.isActive = false;
+			}
+			return (true);
+		}
+	}
+	return (false);
 }
